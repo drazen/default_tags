@@ -1,0 +1,25 @@
+service: default-tags
+
+provider:
+  name: aws
+  runtime: python3.8
+  region: ca-central-1
+
+  # TODO - clamp down to least privilge
+  iamRoleStatements:
+  - Effect: "Allow"
+    Action:
+      - "s3:*"
+    Resource: '*'
+
+functions:
+  default_tags:
+    handler: handler.default_tags
+    events:
+      - eventBridge:
+          pattern:
+            source:
+              - aws.config
+            detail-type:
+              - 'Config Configuration Item Change'
+
